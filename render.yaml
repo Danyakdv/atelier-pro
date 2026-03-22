@@ -1,0 +1,28 @@
+services:
+  - type: web
+    name: atelier-backend
+    runtime: node
+    rootDir: backend
+    buildCommand: npm install
+    startCommand: npm start
+    envVars:
+      - key: MONGODB_URI
+        sync: false   # вводишь вручную в Render dashboard
+      - key: JWT_SECRET
+        sync: false
+      - key: FRONTEND_URL
+        sync: false
+
+  - type: web
+    name: atelier-frontend
+    runtime: static
+    rootDir: frontend
+    buildCommand: npm install && npm run build
+    staticPublishPath: dist
+    envVars:
+      - key: VITE_API_URL
+        sync: false   # вводишь URL бэкенда вручную
+    routes:
+      - type: rewrite
+        source: /*
+        destination: /index.html

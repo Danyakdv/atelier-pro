@@ -1,0 +1,91 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id         Int      @id @default(autoincrement())
+  email      String   @unique
+  password   String
+  firstName  String
+  lastName   String
+  phone      String?
+  role       Role     @default(client)
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  // Relations
+  ordersAsClient  Order[]  @relation("ClientOrders")
+  ordersAsMaster  Order[]  @relation("MasterOrders")
+  specialization  String?  // только для мастеров
+}
+
+model Service {
+  id          Int      @id @default(autoincrement())
+  name        String
+  description String?
+  basePrice   Float
+  category    String
+  duration    Int      // в днях
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+
+  orders Order[]
+}
+
+model Order {
+  id            Int         @id @default(autoincrement())
+  orderNumber   String      @unique
+  status        OrderStatus @default(new)
+
+  client        User        @relation("ClientOrders", fields: [clientId], references: [id])
+  clientId      Int
+
+  master        User?       @relation("MasterOrders", fields: [masterId], references: [id])
+  masterId      Int?
+
+  service       Service     @relation(fields: [serviceId], references: [id])
+  serviceId     Int
+
+  description   String?
+  measurements  Json?       // мерки клиента
+  price         Float?
+  deadline      DateTime?
+
+  // Примечания
+  clientComment  String?
+  masterComment  String?
+
+  createdAt     DateTime    @default(now())
+  updatedAt     DateTime    @updatedAt
+
+  statusHistory OrderStatusHistory[]
+}
+
+model OrderStatusHistory {
+  id        Int         @id @default(autoincrement())
+  order     Order       @relation(fields: [orderId], references: [id])
+  orderId   Int
+  status    OrderStatus
+  comment   String?
+  createdAt DateTime    @default(now())
+}
+
+enum Role {
+  admin
+  master
+  client
+}
+
+enum OrderStatus {
+  new
+  in_progress
+  fitting
+  ready
+  delivered
+  cancelled
+}
