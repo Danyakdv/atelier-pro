@@ -78,7 +78,7 @@
 
       <div class="flex gap-3 mt-4" style="justify-content: flex-end">
         <router-link to="/client/orders" class="btn btn-outline">Отмена</router-link>
-        <button type="submit" class="btn btn-primary" :disabled="!form.serviceId || !form.description || submitting">
+        <button type="submit" class="btn btn-primary" :disabled="submitting">
           {{ submitting ? 'Отправляем...' : 'Оформить заказ' }}
         </button>
       </div>
@@ -120,7 +120,7 @@ const minDate = computed(() => {
 onMounted(async () => {
   try {
     const res = await api.get('/services')
-    services.value = res.data
+    services.value = res.data.map(s => ({ ...s, _id: String(s._id) }))
   } catch {
     apiError.value = 'Не удалось загрузить список услуг. Попробуйте позже.'
   } finally {
