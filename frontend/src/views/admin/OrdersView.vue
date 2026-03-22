@@ -25,7 +25,7 @@
           <label class="form-label">Мастер</label>
           <select v-model="filterMaster" class="form-input">
             <option value="">Все мастера</option>
-            <option v-for="m in masters" :key="m.id" :value="m.id">{{ m.firstName }} {{ m.lastName }}</option>
+            <option v-for="m in masters" :key="m._id" :value="String(m._id)">{{ m.firstName }} {{ m.lastName }}</option>
           </select>
         </div>
       </div>
@@ -100,7 +100,7 @@
           <label class="form-label">Назначить мастера</label>
           <select v-model="editing.masterId" class="form-input">
             <option :value="null">Не назначен</option>
-            <option v-for="m in masters" :key="m.id" :value="m.id">{{ m.firstName }} {{ m.lastName }}</option>
+            <option v-for="m in masters" :key="m._id" :value="String(m._id)">{{ m.firstName }} {{ m.lastName }}</option>
           </select>
         </div>
 
@@ -190,7 +190,7 @@ onMounted(async () => {
 function openEdit(o) {
   editing.value = {
     ...o,
-    masterId:    o.master?.id ?? null,
+    masterId:    o.master?._id ? String(o.master._id) : null,
     deadlineStr: o.deadline ? o.deadline.slice(0, 10) : '',
   }
   saveError.value = ''
@@ -203,13 +203,13 @@ async function saveOrder() {
   try {
     const payload = {
       status:        editing.value.status,
-      masterId:      editing.value.masterId,
+      masterId:      editing.value.masterId || null,
       price:         editing.value.price,
       deadline:      editing.value.deadlineStr || null,
       masterComment: editing.value.masterComment,
     }
-    const res = await api.put(`/orders/${editing.value.id}`, payload)
-    const idx = orders.value.findIndex(o => o.id === editing.value.id)
+    const res = await api.put(`/orders/${editing.value._id}`, payload)
+    const idx = orders.value.findIndex(o => o._id === editing.value._id)
     if (idx !== -1) orders.value[idx] = res.data
     modal.value = false
   } catch (e) {
