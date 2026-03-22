@@ -16,10 +16,10 @@
         <div class="services-grid">
           <div
             v-for="s in services"
-            :key="s.id"
+            :key="s._id"
             class="service-option"
-            :class="{ selected: form.serviceId === s.id }"
-            @click="form.serviceId = s.id"
+            :class="{ selected: form.serviceId === s._id }"
+            @click="form.serviceId = s._id"
           >
             <div class="service-option-name">{{ s.name }}</div>
             <div class="service-option-cat text-muted text-sm">{{ s.category }}</div>
