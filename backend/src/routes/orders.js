@@ -79,7 +79,7 @@ router.put('/:id', auth, requireRole('admin', 'master'), async (req, res) => {
     const prevStatus = order.status
 
     if (status !== undefined)        order.status        = status
-    if (masterId !== undefined)      order.master        = masterId || null
+    if (masterId !== undefined)      order.master        = masterId ? masterId : null
     if (price !== undefined)         order.price         = price ? Number(price) : null
     if (deadline !== undefined)      order.deadline      = deadline ? new Date(deadline) : null
     if (masterComment !== undefined) order.masterComment = masterComment
@@ -91,7 +91,10 @@ router.put('/:id', auth, requireRole('admin', 'master'), async (req, res) => {
     await order.save()
     await order.populate(POPULATE)
     res.json(order)
-  } catch { res.status(500).json({ message: 'Ошибка сервера' }) }
+  } catch (e) {
+    console.error('PUT /orders error:', e.message)
+    res.status(500).json({ message: e.message || 'Ошибка сервера' })
+  }
 })
 
 // DELETE /api/orders/:id — только admin
