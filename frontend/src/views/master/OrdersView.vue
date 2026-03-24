@@ -81,7 +81,15 @@
           <div class="text-sm mt-2"><b>Услуга:</b> {{ selected.service?.name }}</div>
           <div v-if="selected.description" class="text-sm mt-2 text-muted">{{ selected.description }}</div>
           <div v-if="selected.clientComment" class="text-sm mt-2"><b>Пожелание клиента:</b> {{ selected.clientComment }}</div>
-          <div v-if="selected.measurements" class="text-sm mt-2"><b>Мерки:</b> {{ JSON.stringify(selected.measurements) }}</div>
+          <div v-if="selected.measurements && hasMeasurements(selected.measurements)" class="text-sm mt-2">
+            <b>Мерки:</b>
+            <div class="measurements-grid">
+              <div v-for="(val, key) in selected.measurements" :key="key" v-show="val" class="measurement-item">
+                <span class="text-muted">{{ measurementLabel(key) }}:</span>
+                <span> {{ val }} см</span>
+              </div>
+            </div>
+          </div>
         </div>
 
         <div class="form-group">
@@ -174,7 +182,22 @@ async function updateStatus() {
   }
 }
 
-function isOverdue(o) {
+const MEASUREMENT_LABELS = {
+  chest:    'Обхват груди',
+  waist:    'Обхват талии',
+  hips:     'Обхват бёдер',
+  height:   'Рост',
+  shoulder: 'Ширина плеч',
+  sleeve:   'Длина рукава',
+}
+
+function measurementLabel(key) {
+  return MEASUREMENT_LABELS[key] || key
+}
+
+function hasMeasurements(m) {
+  return m && Object.values(m).some(v => v)
+}
   return o.deadline && new Date(o.deadline) < new Date() && !['ready','delivered','cancelled'].includes(o.status)
 }
 
@@ -194,4 +217,15 @@ function statusClass(s) { return STATUS_MAP[s]?.cls   || '' }
 
 <style scoped>
 .text-danger { color: var(--red); font-size: 13px; font-weight: 500; }
+.measurements-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 4px 16px;
+  margin-top: 6px;
+  padding: 8px 10px;
+  background: var(--ivory);
+  border-radius: var(--radius);
+  border: 1px solid var(--border);
+}
+.measurement-item { font-size: 13px; }
 </style>
