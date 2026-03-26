@@ -81,15 +81,17 @@
           <div class="text-sm mt-2"><b>Услуга:</b> {{ selected.service?.name }}</div>
           <div v-if="selected.description" class="text-sm mt-2 text-muted">{{ selected.description }}</div>
           <div v-if="selected.clientComment" class="text-sm mt-2"><b>Пожелание клиента:</b> {{ selected.clientComment }}</div>
-          <div v-if="selected.measurements && hasMeasurements(selected.measurements)" class="text-sm mt-2">
-            <b>Мерки:</b>
-            <div class="measurements-grid">
-              <div v-for="(val, key) in selected.measurements" :key="key" v-show="val" class="measurement-item">
-                <span class="text-muted">{{ measurementLabel(key) }}:</span>
-                <span> {{ val }} см</span>
-              </div>
+          <div v-if="selected.measurements" class="text-sm mt-2">
+          <b>Мерки:</b>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:4px 16px;margin-top:6px;padding:8px;background:var(--ivory);border-radius:4px;border:1px solid var(--border)">
+              <div v-if="selected.measurements.chest">Обхват груди: {{ selected.measurements.chest }} см</div>
+              <div v-if="selected.measurements.waist">Обхват талии: {{ selected.measurements.waist }} см</div>
+              <div v-if="selected.measurements.hips">Обхват бёдер: {{ selected.measurements.hips }} см</div>
+              <div v-if="selected.measurements.height">Рост: {{ selected.measurements.height }} см</div>
+              <div v-if="selected.measurements.shoulder">Ширина плеч: {{ selected.measurements.shoulder }} см</div>
+              <div v-if="selected.measurements.sleeve">Длина рукава: {{ selected.measurements.sleeve }} см</div>
             </div>
-          </div>
+        </div>
         </div>
 
         <div class="form-group">
