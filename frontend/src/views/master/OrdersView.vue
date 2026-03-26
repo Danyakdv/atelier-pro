@@ -81,20 +81,17 @@
           <div class="text-sm mt-2"><b>Услуга:</b> {{ selected.service?.name }}</div>
           <div v-if="selected.description" class="text-sm mt-2 text-muted">{{ selected.description }}</div>
           <div v-if="selected.clientComment" class="text-sm mt-2"><b>Пожелание клиента:</b> {{ selected.clientComment }}</div>
-          
-          <!-- ИСПРАВЛЕННЫЙ БЛОК МЕРОК -->
-          <div v-if="parsedMeasurements" class="text-sm mt-2">
+          <div v-if="selected.measurements" class="text-sm mt-2">
             <b>Мерки:</b>
-            <div class="measurements-grid">
-              <div v-if="parsedMeasurements.chest" class="measurement-item">Обхват груди: {{ parsedMeasurements.chest }} см</div>
-              <div v-if="parsedMeasurements.waist" class="measurement-item">Обхват талии: {{ parsedMeasurements.waist }} см</div>
-              <div v-if="parsedMeasurements.hips" class="measurement-item">Обхват бёдер: {{ parsedMeasurements.hips }} см</div>
-              <div v-if="parsedMeasurements.height" class="measurement-item">Рост: {{ parsedMeasurements.height }} см</div>
-              <div v-if="parsedMeasurements.shoulder" class="measurement-item">Ширина плеч: {{ parsedMeasurements.shoulder }} см</div>
-              <div v-if="parsedMeasurements.sleeve" class="measurement-item">Длина рукава: {{ parsedMeasurements.sleeve }} см</div>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:4px 16px;margin-top:6px;padding:8px;background:var(--ivory);border-radius:4px;border:1px solid var(--border)">
+              <div v-if="selected.measurements.chest">Обхват груди: {{ selected.measurements.chest }} см</div>
+              <div v-if="selected.measurements.waist">Обхват талии: {{ selected.measurements.waist }} см</div>
+              <div v-if="selected.measurements.hips">Обхват бёдер: {{ selected.measurements.hips }} см</div>
+              <div v-if="selected.measurements.height">Рост: {{ selected.measurements.height }} см</div>
+              <div v-if="selected.measurements.shoulder">Ширина плеч: {{ selected.measurements.shoulder }} см</div>
+              <div v-if="selected.measurements.sleeve">Длина рукава: {{ selected.measurements.sleeve }} см</div>
             </div>
-          </div>
-
+        </div>
         </div>
 
         <div class="form-group">
@@ -150,23 +147,6 @@ const filtered = computed(() => {
   })
 })
 
-// ДОБАВЛЕНО: Вычисляемое свойство для парсинга строки мерок в объект
-const parsedMeasurements = computed(() => {
-  const m = selected.value?.measurements;
-  if (!m) return null; // Если мерок нет, возвращаем null
-
-  // Если это уже объект (на всякий случай), просто возвращаем его
-  if (typeof m === 'object') return m;
-
-  // Если это строка (JSON), пробуем распарсить
-  try {
-    return JSON.parse(m);
-  } catch (error) {
-    console.error("Ошибка при чтении мерок:", error);
-    return null;
-  }
-});
-
 onMounted(async () => {
   try {
     const res = await api.get('/master/orders')
@@ -220,9 +200,6 @@ function measurementLabel(key) {
 function hasMeasurements(m) {
   return m && Object.values(m).some(v => v)
 }
-
-// ИСПРАВЛЕНО: Восстановлено начало функции isOverdue, которое вы случайно удалили
-function isOverdue(o) {
   return o.deadline && new Date(o.deadline) < new Date() && !['ready','delivered','cancelled'].includes(o.status)
 }
 
@@ -252,5 +229,5 @@ function statusClass(s) { return STATUS_MAP[s]?.cls   || '' }
   border-radius: var(--radius);
   border: 1px solid var(--border);
 }
-.measurement-item { font-size: 13px; color: var(--text-color); }
+.measurement-item { font-size: 13px; }
 </style>
