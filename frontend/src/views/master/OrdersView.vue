@@ -82,7 +82,7 @@
           <div v-if="selected.description" class="text-sm mt-2 text-muted">{{ selected.description }}</div>
           <div v-if="selected.clientComment" class="text-sm mt-2"><b>Пожелание клиента:</b> {{ selected.clientComment }}</div>
           <div v-if="selected.measurements" class="text-sm mt-2">
-          <b>Мерки:</b>
+            <b>Мерки:</b>
             <div style="display:grid;grid-template-columns:1fr 1fr;gap:4px 16px;margin-top:6px;padding:8px;background:var(--ivory);border-radius:4px;border:1px solid var(--border)">
               <div v-if="selected.measurements.chest">Обхват груди: {{ selected.measurements.chest }} см</div>
               <div v-if="selected.measurements.waist">Обхват талии: {{ selected.measurements.waist }} см</div>
